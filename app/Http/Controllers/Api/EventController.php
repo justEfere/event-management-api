@@ -14,11 +14,8 @@ class EventController extends Controller
      */
     public function index()
     {
-        // $events = Event::all();
 
-        // return response()->json($events);
-
-        return EventResource::collection(Event::with('user')->get());
+        return EventResource::collection(Event::with('user')->paginate(4));
     }
 
     /**
@@ -80,14 +77,6 @@ class EventController extends Controller
     public function destroy(Event $event)
     {
         $event->delete();
-
-        // return response()->json([
-        //     'message' => "Event deleted successfully"
-        // ]);
-
-        // return response([
-        //     "message" => "event deleted"
-        // ], 200);
 
         return response(status: 204);
     }
