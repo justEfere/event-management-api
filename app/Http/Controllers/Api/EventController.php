@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Traits\CanLoadRelationships;
 use App\Models\Event;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\EventResource;
+use App\Http\Traits\CanLoadRelationships;
+use Illuminate\Routing\Controllers\Middleware;
 
 class EventController extends Controller
 {
@@ -14,6 +15,14 @@ class EventController extends Controller
 
 
     private array $allowedRelations = ['user', 'attendees', 'attendees.user'];
+
+    // protecting route
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('auth:sanctum', except: ['index', 'show']),
+        ];
+    }
     /**
      * Display a listing of the resource.
      */
@@ -41,7 +50,7 @@ class EventController extends Controller
             "description" => $request->description,
             "start_time" => $request->start_time,
             "end_time" => $request->end_time,
-            "user_id" => 1
+            "user_id" => $request->user()->id
         ]);
 
         return new EventResource($this->loadRelationships($event, $this->allowedRelations));
